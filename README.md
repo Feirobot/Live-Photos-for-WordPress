@@ -13,7 +13,7 @@
 
 ## 效果演示
 
-![Live Photo Effect](https://eatbbqcici.oss-cn-shenzhen.aliyuncs.com/images/eatbbq/2025/09/MVIMG_20241231_161000-scaled.jpg)
+![Live Photo Demo](demo.gif)
 
 访问 [演示页面](https://eatbbq.cn/archives/260) 查看实际效果。
 
