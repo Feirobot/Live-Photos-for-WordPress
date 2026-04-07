@@ -1,0 +1,59 @@
+.live-photo-edit {
+    padding: 20px;
+    border: 1px dashed #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.live-photo-media-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.live-photo-preview {
+    margin-bottom: 20px;
+}
+
+.live-photo-media-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.live-photo-preview-item {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.live-photo-preview-item h4,
+.live-photo-preview-item h5 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: '1e1e1e';
+}
+
+.live-photo-preview-item img,
+.live-photo-preview-item video {
+    max-width: '100%';
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 782px) {
+    .live-photo-media-preview {
+        flex-direction: column;
+    }
+    
+    .live-photo-preview-item {
+        min-width: 100%;
+    }
+}

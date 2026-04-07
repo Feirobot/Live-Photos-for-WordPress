@@ -1,0 +1,222 @@
+:root {
+    --border-radius: 8px;
+}
+
+.live-photo {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    max-width: min(800px, 80%); /* 增加最大宽度和百分比 */
+    height: auto !important;
+    margin: 1em auto;
+    display: block; /* 改为块级元素 */
+    background-color: #f0f0f0; /* 添加背景色 */
+    aspect-ratio: auto; /* 自适应比例 */
+}
+
+.live-photo .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.live-photo .container img, 
+.live-photo .container video {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 使用contain确保完整显示 */
+    top: 0;
+    left: 0;
+}
+
+.live-photo .container img {
+    transition: opacity 1s ease;
+}
+
+.live-photo .container video {
+    transition: opacity 1s ease;
+    opacity: 0;
+}
+
+.live-photo.zoom .container img {
+    opacity: 0;
+}
+
+.live-photo.zoom .container video {
+    opacity: 1;
+}
+
+.live-photo.zoom .icon img {
+    animation: spin 5s linear infinite;
+}
+
+/* 实况图标位置调整到左上角 */
+.live-photo .icon {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px;
+    border-radius: var(--border-radius);
+    position: absolute;
+    left: 10px; /* 左上角 */
+    top: 10px;
+    height: 22px;
+    background-color: rgba(240, 255, 255, 0.6705882353);
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+}
+
+.live-photo .icon img {
+    width: 22px;
+    height: 22px;
+}
+
+.live-photo .icon span {
+    padding: 3px;
+    color: #606060;
+    font-size: 80%;
+    /* 移除加粗效果 */
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+@container (max-width: 200px) {
+    .live-photo .icon span {
+        display: none;
+    }
+}
+
+/* 声音开关样式 */
+.live-photo .sound-toggle {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.live-photo .sound-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.live-photo .sound-off {
+    display: none;
+}
+
+/* 警告信息位置调整 */
+.live-photo .warning {
+    padding: 4px 6px;
+    margin: 10px;
+    color: #9a6700;
+    border-radius: var(--border-radius);
+    position: absolute;
+    left: 0; /* 左上角 */
+    top: 40px;
+    background-color: rgba(240, 255, 255, 0.6705882353);
+    transition: opacity 0.5s linear;
+    z-index: 10;
+    display: none;
+}
+
+.live-photo .warning.show {
+    opacity: 1 !important;
+    display: inline-block !important;
+}
+
+.live-photo-placeholder {
+    padding: 40px;
+    text-align: center;
+    background-color: #f5f5f5;
+    border: 1px dashed #ccc;
+    color: #666;
+    border-radius: 8px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 响应式设计 - 电脑端优化 */
+@media (min-width: 769px) {
+    .live-photo {
+        max-width: min(800px, 60%); /* 电脑上使用更大的宽度 */
+    }
+    
+    .live-photo .icon {
+        left: 15px;
+        top: 15px;
+        height: 24px;
+    }
+    
+    .live-photo .icon img {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .live-photo .icon span {
+        font-size: 85%;
+    }
+}
+
+/* 响应式设计 - 移动端 */
+@media (max-width: 768px) {
+    .live-photo {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100% !important;
+    }
+    
+    .live-photo .icon {
+        left: 8px;
+        top: 8px;
+        height: 20px;
+    }
+    
+    .live-photo .icon img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .live-photo .icon span {
+        font-size: 75%;
+    }
+}
+
+/* 确保视频不会显示控制条 */
+.live-photo .container video::-webkit-media-controls {
+    display: none !important;
+}
+
+.live-photo .container video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+.live-photo .container video::-webkit-media-controls-panel {
+    display: none !important;
+}
+
+/* 加载指示器 */
+.live-photo .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    z-index: 5;
+}
