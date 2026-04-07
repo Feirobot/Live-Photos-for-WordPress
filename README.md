@@ -13,7 +13,7 @@
 
 ## 效果演示
 
-<video src="https://github.com/Feirobot/Live-Photos-for-WordPress/releases/download/v1.3/demo.mp4" controls width="100%"></video>
+![效果演示](demo.gif)
 
 访问 [演示页面](https://eatbbq.cn/archives/260) 查看实际效果。
 
