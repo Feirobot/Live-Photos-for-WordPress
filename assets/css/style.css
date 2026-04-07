@@ -113,26 +113,6 @@
     display: none;
 }
 
-/* 警告信息位置调整 */
-.live-photo .warning {
-    padding: 4px 6px;
-    margin: 10px;
-    color: #9a6700;
-    border-radius: var(--border-radius);
-    position: absolute;
-    left: 0; /* 左上角 */
-    top: 40px;
-    background-color: rgba(240, 255, 255, 0.6705882353);
-    transition: opacity 0.5s linear;
-    z-index: 10;
-    display: none;
-}
-
-.live-photo .warning.show {
-    opacity: 1 !important;
-    display: inline-block !important;
-}
-
 .live-photo-placeholder {
     padding: 40px;
     text-align: center;

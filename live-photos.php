@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Live Photos for WordPress
  * Description: 实现与苹果Live Photos相同效果的WordPress插件
- * Version: 1.2
+ * Version: 1.3
  * Author: fei
  */
 
@@ -167,7 +167,6 @@ class LivePhotosFinalPlugin {
                     <img src="%s" class="no-zoom static" loading="lazy">
                     <span>LIVE</span>
                 </div>
-                <div class="warning" style="opacity: 0;"></div>
             </div>',
             esc_attr($atts['class']),
             $width,
@@ -207,7 +206,6 @@ class LivePhotosFinalPlugin {
                     <img src="%s" class="no-zoom static" loading="lazy">
                     <span>LIVE</span>
                 </div>
-                <div class="warning" style="opacity: 0;"></div>
             </div>',
             $class_name,
             $width,

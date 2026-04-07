@@ -48,7 +48,6 @@ function initLivePhotos() {
         const icon = livePhoto.querySelector('.icon');
         const video = container.querySelector('video');
         const image = container.querySelector('img');
-        const warning = livePhoto.querySelector('.warning');
 
         // 标记为已初始化
         livePhoto.classList.add('initialized');
@@ -61,11 +60,9 @@ function initLivePhotos() {
         // 设置初始静音状态
         const isMuted = livePhoto.getAttribute('data-muted') === 'true';
         video.muted = isMuted;
-        
-    // ...已移除声音控件相关逻辑...
 
-    // 预加载视频
-    video.load();
+        // 预加载视频
+        video.load();
 
         // 如果图片已经加载，设置比例
         if (image.complete && image.naturalWidth > 0) {
@@ -74,8 +71,8 @@ function initLivePhotos() {
             livePhoto.setAttribute('data-aspect-ratio', aspectRatio);
         }
 
-    // fix: 鼠标进入 → 开始加载 → 鼠标离开（加载成功前） → 加载失败。
-    let within = false;
+        // fix: 鼠标进入 → 开始加载 → 鼠标离开（加载成功前） → 加载失败。
+        let within = false;
 
         const start = async (e) => {
             e.stopPropagation();
@@ -87,28 +84,16 @@ function initLivePhotos() {
                 video.currentTime = 0;
                 await video.play();
                 livePhoto.classList.add('zoom');
-            }
-            catch(e) {
+            } catch(e) {
                 console.log(e);
-                if (within && e instanceof DOMException) {
-                    if (['NotAllowedError','AbortError'].includes(e.name)) {
-                        warning.innerText = '';
-                    } else if (['NotSupportedError'].includes(e.name)) {
-                        warning.innerText = '';
-                    } else {
-                        warning.innerText = `${e}`;
-                    }
-                    warning.classList.add('show');
-                }
             }
         };
 
         const leave = (e) => {
             livePhoto.classList.remove('zoom');
-            warning.classList.remove('show');
 
             // await play() 可能一直卡住不返回。
-            // 在 pause 之前设置，如果  await play() 还没
+            // 在 pause 之前设置，如果 await play() 还没
             // 成功返回，就会进入异常处理。
             within = false;
 
