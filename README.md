@@ -13,7 +13,7 @@
 
 ## 效果演示
 
-![Live Photo Demo](demo.gif)
+https://github.com/user-attachments/assets/demo.mp4
 
 访问 [演示页面](https://eatbbq.cn/archives/260) 查看实际效果。
 
