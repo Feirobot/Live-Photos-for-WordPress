@@ -78,32 +78,21 @@ function initLivePhotos() {
         const start = async (e) => {
             e.stopPropagation();
             e.preventDefault();
-
-            within = true;
-
-            try {
-                video.currentTime = 0;
-                await video.play();
-                livePhoto.classList.add('zoom');
-            } catch(e) {
-                console.log(e);
-            }
+            await playVideo();
         };
 
         const leave = (e) => {
-            livePhoto.classList.remove('zoom');
-
-            // await play() 可能一直卡住不返回。
-            // 在pause之前设置，如果await play()还没
-            // 成功返回，就会进入异常处理。
-            within = false;
-
-            video.pause();
+            stopVideo();
         };
 
         // 播放视频
         const playVideo = async () => {
             try {
+                // 触发震动反馈（如果设备支持）
+                if (navigator.vibrate) {
+                    navigator.vibrate(50); // 短震动 50ms
+                }
+
                 video.currentTime = 0;
                 await video.play();
                 livePhoto.classList.add('zoom');
