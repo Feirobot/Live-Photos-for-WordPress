@@ -73,6 +73,10 @@ function initLivePhotos() {
 
         // fix: 鼠标进入 → 开始加载 → 鼠标离开（加载成功前） → 加载失败。
         let within = false;
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let isTouchMoved = false;
+        const TOUCH_THRESHOLD = 10; // 滑动阈值，超过视为滚动
 
         const start = async (e) => {
             e.stopPropagation();
@@ -93,25 +97,67 @@ function initLivePhotos() {
             livePhoto.classList.remove('zoom');
 
             // await play() 可能一直卡住不返回。
-            // 在 pause 之前设置，如果 await play() 还没
+            // 在pause之前设置，如果await play()还没
             // 成功返回，就会进入异常处理。
             within = false;
 
             video.pause();
         };
 
-        // 桌面设备：鼠标悬停在图标上播放
-        icon.addEventListener('mouseenter', start);
-        icon.addEventListener('mouseleave', leave);
+        // 触摸开始
+        const touchStart = (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+            isTouchMoved = false;
+        };
+
+        // 触摸移动 - 检测是否滑动
+        const touchMove = (e) => {
+            const touchY = e.touches[0].clientY;
+            const touchX = e.touches[0].clientX;
+            const deltaY = Math.abs(touchY - touchStartY);
+            const deltaX = Math.abs(touchX - touchStartX);
+
+            // 如果移动超过阈值，标记为滑动
+            if (deltaY > TOUCH_THRESHOLD || deltaX > TOUCH_THRESHOLD) {
+                isTouchMoved = true;
+            }
+        };
+
+        // 触摸结束 - 只有未滑动时才播放
+        const touchEnd = async (e) => {
+            // 如果发生了滑动，不播放视频
+            if (isTouchMoved) {
+                return;
+            }
+
+            e.stopPropagation();
+
+            within = true;
+
+            try {
+                video.currentTime = 0;
+                await video.play();
+                livePhoto.classList.add('zoom');
+            } catch(e) {
+                console.log(e);
+            }
+        };
+
+        const touchCancel = () => {
+            isTouchMoved = false;
+            leave();
+        };
 
         // 桌面设备：鼠标悬停在图标上播放
         icon.addEventListener('mouseenter', start);
         icon.addEventListener('mouseleave', leave);
 
-        // 移动设备：触摸图片播放
-        image.addEventListener('touchstart', start);
-        image.addEventListener('touchend', leave);
-        image.addEventListener('touchcancel', leave);
+        // 移动设备：触摸事件处理
+        image.addEventListener('touchstart', touchStart, { passive: true });
+        image.addEventListener('touchmove', touchMove, { passive: true });
+        image.addEventListener('touchend', touchEnd);
+        image.addEventListener('touchcancel', touchCancel);
 
         video.addEventListener('ended', () => {
             livePhoto.classList.remove('zoom');
