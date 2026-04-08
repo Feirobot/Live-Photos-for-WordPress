@@ -178,52 +178,48 @@ function initLivePhotos() {
         icon.addEventListener('mouseleave', leave);
 
         // 移动设备：触摸事件处理
-        // 微信浏览器特殊处理：使用遮罩层处理触摸事件
-        if (isWeixin) {
-            // 获取遮罩层元素
-            const overlay = container.querySelector('.overlay');
+        // 所有浏览器都使用遮罩层处理触摸事件
+        if (overlay) {
+            let touchTimer = null;
+            let isPlaying = false;
 
-            let wxTouchTimer = null;
-            let wxIsPlaying = false;
+            overlay.addEventListener('touchstart', function(e) {
+                touchTimer = setTimeout(function() {
+                    isPlaying = true;
+                    playVideo();
+                }, 300);
+            }, { passive: true });
 
-            // 在遮罩层上处理触摸事件（如果遮罩层存在）
-            if (overlay) {
-                overlay.addEventListener('touchstart', function(e) {
-                    wxTouchTimer = setTimeout(function() {
-                        wxIsPlaying = true;
-                        playVideo();
-                    }, 300);
-                }, { passive: true });
+            overlay.addEventListener('touchmove', function(e) {
+                if (touchTimer) {
+                    clearTimeout(touchTimer);
+                    touchTimer = null;
+                }
+            }, { passive: true });
 
-                overlay.addEventListener('touchmove', function(e) {
-                    if (wxTouchTimer) {
-                        clearTimeout(wxTouchTimer);
-                        wxTouchTimer = null;
-                    }
-                }, { passive: true });
-
-                overlay.addEventListener('touchend', function(e) {
-                    if (wxTouchTimer) {
-                        clearTimeout(wxTouchTimer);
-                        wxTouchTimer = null;
-                    }
-                    if (wxIsPlaying) {
-                        wxIsPlaying = false;
-                        stopVideo();
-                    }
-                }, { passive: true });
-
-                overlay.addEventListener('touchcancel', function(e) {
-                    if (wxTouchTimer) {
-                        clearTimeout(wxTouchTimer);
-                        wxTouchTimer = null;
-                    }
-                    wxIsPlaying = false;
+            overlay.addEventListener('touchend', function(e) {
+                if (touchTimer) {
+                    clearTimeout(touchTimer);
+                    touchTimer = null;
+                }
+                if (isPlaying) {
+                    isPlaying = false;
                     stopVideo();
-                }, { passive: true });
-            }
+                }
+            }, { passive: true });
 
-            // 图标点击播放
+            overlay.addEventListener('touchcancel', function(e) {
+                if (touchTimer) {
+                    clearTimeout(touchTimer);
+                    touchTimer = null;
+                }
+                isPlaying = false;
+                stopVideo();
+            }, { passive: true });
+        }
+
+        // 微信浏览器：图标轻触播放
+        if (isWeixin) {
             icon.addEventListener('touchstart', function(e) {
                 e.stopPropagation();
                 playVideo();
@@ -233,22 +229,6 @@ function initLivePhotos() {
                 e.stopPropagation();
                 setTimeout(stopVideo, 2000);
             }, { passive: true });
-
-            // 微信浏览器：遮罩层长按播放
-            if (overlay) {
-                overlay.addEventListener('touchstart', touchStart, { passive: true });
-                overlay.addEventListener('touchmove', touchMove, { passive: true });
-                overlay.addEventListener('touchend', touchEnd);
-                overlay.addEventListener('touchcancel', touchCancel);
-            }
-        } else {
-            // 其他浏览器：遮罩层长按播放
-            if (overlay) {
-                overlay.addEventListener('touchstart', touchStart, { passive: true });
-                overlay.addEventListener('touchmove', touchMove, { passive: true });
-                overlay.addEventListener('touchend', touchEnd);
-                overlay.addEventListener('touchcancel', touchCancel);
-            }
         }
 
         video.addEventListener('ended', () => {
