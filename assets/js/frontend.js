@@ -1,23 +1,6 @@
 // 检测是否微信浏览器
 const isWeixin = /MicroMessenger/i.test(navigator.userAgent);
 
-// 全局函数，用于图片加载后初始化比例
-window.livePhotosInit = function(img) {
-    const container = img.closest('.live-photo');
-    if (!container) return;
-    
-    // 获取图片自然尺寸
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
-    
-    if (naturalWidth > 0 && naturalHeight > 0) {
-        // 计算并设置比例
-        const aspectRatio = naturalWidth / naturalHeight;
-        container.style.aspectRatio = aspectRatio;
-        container.setAttribute('data-aspect-ratio', aspectRatio);
-    }
-};
-
 document.addEventListener('DOMContentLoaded', () => {
     // 初始化所有实况照片
     initLivePhotos();
@@ -50,7 +33,6 @@ function initLivePhotos() {
         const container = livePhoto.querySelector('.container');
         const icon = livePhoto.querySelector('.icon');
         const video = container.querySelector('video');
-        const image = container.querySelector('img');
 
         // 标记为已初始化
         livePhoto.classList.add('initialized');
@@ -59,18 +41,22 @@ function initLivePhotos() {
         const overlay = container.querySelector('.overlay');
         const photoBg = container.querySelector('.photo-bg');
 
-        // 设置背景图
+        // 设置背景图并获取尺寸
         if (photoBg) {
             const photoUrl = livePhoto.getAttribute('data-photo');
             if (photoUrl) {
                 photoBg.style.backgroundImage = 'url(' + photoUrl + ')';
+
+                // 创建 Image 对象获取尺寸
+                const tempImg = new Image();
+                tempImg.onload = function() {
+                    const aspectRatio = tempImg.naturalWidth / tempImg.naturalHeight;
+                    livePhoto.style.aspectRatio = aspectRatio;
+                    livePhoto.setAttribute('data-aspect-ratio', aspectRatio);
+                };
+                tempImg.src = photoUrl;
             }
         }
-
-        // 确保视频属性正确设置
-        video.playsInline = true;
-        video.setAttribute('playsinline', '');
-        video.setAttribute('webkit-playsinline', '');
 
         // 设置初始静音状态
         const isMuted = livePhoto.getAttribute('data-muted') === 'true';
@@ -194,24 +180,6 @@ function initLivePhotos() {
             stopVideo();
         };
 
-        // 阻止上下文菜单（长按弹出的菜单）
-        image.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            return false;
-        });
-
-        // 阻止选择事件（微信等浏览器）
-        image.addEventListener('selectstart', (e) => {
-            e.preventDefault();
-            return false;
-        });
-
-        // 阻止拖拽
-        image.addEventListener('dragstart', (e) => {
-            e.preventDefault();
-            return false;
-        });
-
         // 桌面设备：鼠标悬停在图标上播放
         icon.addEventListener('mouseenter', start);
         icon.addEventListener('mouseleave', leave);
@@ -271,12 +239,14 @@ function initLivePhotos() {
                 e.stopPropagation();
                 setTimeout(stopVideo, 2000);
             }, { passive: true });
-        } else {
-            // 其他浏览器：在图片上长按播放
-            image.addEventListener('touchstart', touchStart, { passive: true });
-            image.addEventListener('touchmove', touchMove, { passive: true });
-            image.addEventListener('touchend', touchEnd);
-            image.addEventListener('touchcancel', touchCancel);
+        }
+
+        // 所有浏览器：遮罩层长按播放（现在没有 img 元素了）
+        if (overlay) {
+            overlay.addEventListener('touchstart', touchStart, { passive: true });
+            overlay.addEventListener('touchmove', touchMove, { passive: true });
+            overlay.addEventListener('touchend', touchEnd);
+            overlay.addEventListener('touchcancel', touchCancel);
         }
 
         video.addEventListener('ended', () => {
