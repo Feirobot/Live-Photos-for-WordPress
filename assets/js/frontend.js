@@ -1,3 +1,6 @@
+// 检测是否微信浏览器
+const isWeixin = /MicroMessenger/i.test(navigator.userAgent);
+
 // 全局函数，用于图片加载后初始化比例
 window.livePhotosInit = function(img) {
     const container = img.closest('.live-photo');
@@ -76,6 +79,7 @@ function initLivePhotos() {
         let touchStartY = 0;
         let touchStartX = 0;
         let isTouchMoved = false;
+        let isScrolling = false;
         let longPressTimer = null;
         const TOUCH_THRESHOLD = 10; // 滑动阈值，超过视为滚动
         const LONG_PRESS_DURATION = 300; // 长按阈值（毫秒），超过视为长按
@@ -151,6 +155,9 @@ function initLivePhotos() {
                     clearTimeout(longPressTimer);
                     longPressTimer = null;
                 }
+
+                // 如果是滑动，确保后续触摸不会触发播放
+                isScrolling = true;
             }
         };
 
@@ -178,6 +185,19 @@ function initLivePhotos() {
         // 阻止上下文菜单（长按弹出的菜单）
         image.addEventListener('contextmenu', (e) => {
             e.preventDefault();
+            return false;
+        });
+
+        // 阻止选择事件（微信等浏览器）
+        image.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // 阻止拖拽
+        image.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
         });
 
         // 桌面设备：鼠标悬停在图标上播放
@@ -189,6 +209,36 @@ function initLivePhotos() {
         image.addEventListener('touchmove', touchMove, { passive: true });
         image.addEventListener('touchend', touchEnd);
         image.addEventListener('touchcancel', touchCancel);
+
+        // 微信浏览器特殊处理：在捕获阶段处理长按菜单
+        if (isWeixin) {
+            // 微信浏览器需要在 touchstart 中阻止默认行为来防止长按菜单
+            // 但这样会影响滚动，所以我们需要在触摸开始时不知道是否是滑动
+            // 因此，我们采用一个简单的方法：轻触不播放，只有点击 LIVE 图标才播放
+
+            // 移除图片上的触摸事件，改为点击图标播放
+            image.removeEventListener('touchstart', touchStart);
+            image.removeEventListener('touchmove', touchMove);
+            image.removeEventListener('touchend', touchEnd);
+            image.removeEventListener('touchcancel', touchCancel);
+
+            // 在图标上添加触摸事件
+            icon.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                playVideo();
+            }, { passive: false });
+
+            icon.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+                stopVideo();
+            }, { passive: false });
+
+            icon.addEventListener('touchcancel', function(e) {
+                e.stopPropagation();
+                stopVideo();
+            }, { passive: false });
+        }
 
         video.addEventListener('ended', () => {
             livePhoto.classList.remove('zoom');
