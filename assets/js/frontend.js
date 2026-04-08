@@ -210,32 +210,47 @@ function initLivePhotos() {
         image.addEventListener('touchend', touchEnd);
         image.addEventListener('touchcancel', touchCancel);
 
-        // 微信浏览器特殊处理：在捕获阶段处理长按菜单
+        // 微信浏览器特殊处理
         if (isWeixin) {
-            // 微信浏览器需要在 touchstart 中阻止默认行为来防止长按菜单
-            // 但这样会影响滚动，所以我们需要在触摸开始时不知道是否是滑动
-            // 因此，我们采用一个简单的方法：轻触不播放，只有点击 LIVE 图标才播放
+            // 在微信浏览器中，我们需要阻止长按菜单的弹出
+            // 使用 touch-action: pan-y 允许垂直滚动
+            // 同时在 touchstart 中阻止默认行为来防止长按菜单
 
-            // 移除图片上的触摸事件，改为点击图标播放
-            image.removeEventListener('touchstart', touchStart);
-            image.removeEventListener('touchmove', touchMove);
-            image.removeEventListener('touchend', touchEnd);
-            image.removeEventListener('touchcancel', touchCancel);
+            let wxTouchStartY = 0;
+            let wxTouchStartX = 0;
+            let wxIsMoving = false;
 
-            // 在图标上添加触摸事件
-            icon.addEventListener('touchstart', function(e) {
-                e.stopPropagation();
+            image.addEventListener('touchstart', function(e) {
+                wxTouchStartY = e.touches[0].clientY;
+                wxTouchStartX = e.touches[0].clientX;
+                wxIsMoving = false;
+
+                // 阻止默认行为以防止长按菜单
+                // touch-action: pan-y 允许垂直滚动
                 e.preventDefault();
-                playVideo();
             }, { passive: false });
 
-            icon.addEventListener('touchend', function(e) {
-                e.stopPropagation();
-                stopVideo();
+            image.addEventListener('touchmove', function(e) {
+                const touchY = e.touches[0].clientY;
+                const touchX = e.touches[0].clientX;
+                const deltaY = Math.abs(touchY - wxTouchStartY);
+                const deltaX = Math.abs(touchX - wxTouchStartX);
+
+                if (deltaY > 10 || deltaX > 10) {
+                    wxIsMoving = true;
+                }
             }, { passive: false });
 
-            icon.addEventListener('touchcancel', function(e) {
-                e.stopPropagation();
+            image.addEventListener('touchend', function(e) {
+                if (!wxIsMoving) {
+                    // 轻触播放
+                    playVideo();
+                    // 延迟停止播放，给用户一个短暂的播放时间
+                    setTimeout(stopVideo, 1000);
+                }
+            }, { passive: false });
+
+            image.addEventListener('touchcancel', function(e) {
                 stopVideo();
             }, { passive: false });
         }
