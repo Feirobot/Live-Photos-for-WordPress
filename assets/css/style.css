@@ -13,6 +13,8 @@
     background-color: #f0f0f0;
     /* 默认 4:3 比例，JS 加载后会更新 */
     aspect-ratio: 4 / 3;
+    /* 最小高度确保内容可见 */
+    min-height: 200px;
 }
 
 .live-photo .container {
