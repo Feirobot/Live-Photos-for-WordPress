@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Live Photos for WordPress
  * Description: 实现与苹果Live Photos相同效果的WordPress插件
- * Version: 1.4
+ * Version: 1.4.1
  * Author: fei
  */
 

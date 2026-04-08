@@ -2,7 +2,7 @@
 
 实现与苹果 Live Photos 相同效果的 WordPress 插件
 
-![Version](https://img.shields.io/badge/version-1.4-blue.svg)
+![Version](https://img.shields.io/badge/version-1.4.1-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)
 
 ## 前言
