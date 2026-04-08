@@ -65,13 +65,6 @@ function initLivePhotos() {
         // 预加载视频
         video.load();
 
-        // 如果图片已经加载，设置比例
-        if (image.complete && image.naturalWidth > 0) {
-            const aspectRatio = image.naturalWidth / image.naturalHeight;
-            livePhoto.style.aspectRatio = aspectRatio;
-            livePhoto.setAttribute('data-aspect-ratio', aspectRatio);
-        }
-
         // fix: 鼠标进入 → 开始加载 → 鼠标离开（加载成功前） → 加载失败。
         let within = false;
         let touchStartY = 0;
