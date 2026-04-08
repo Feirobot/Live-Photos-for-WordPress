@@ -205,31 +205,31 @@ function initLivePhotos() {
         icon.addEventListener('mouseleave', leave);
 
         // 移动设备：触摸事件处理
-        // 微信浏览器特殊处理
+        // 微信浏览器特殊处理：使用遮罩层处理触摸事件
         if (isWeixin) {
-            // 微信浏览器：通过容器处理触摸事件，避免图片上的长按菜单
+            // 获取遮罩层元素
+            const overlay = container.querySelector('.overlay');
+            if (!overlay) return;
+
             let wxTouchTimer = null;
             let wxIsPlaying = false;
 
-            // 在容器上处理触摸事件
-            container.addEventListener('touchstart', function(e) {
-                // 如果触摸的是图标，让图标处理
-                if (e.target.closest('.icon')) return;
-
+            // 在遮罩层上处理触摸事件
+            overlay.addEventListener('touchstart', function(e) {
                 wxTouchTimer = setTimeout(function() {
                     wxIsPlaying = true;
                     playVideo();
                 }, 300);
             }, { passive: true });
 
-            container.addEventListener('touchmove', function(e) {
+            overlay.addEventListener('touchmove', function(e) {
                 if (wxTouchTimer) {
                     clearTimeout(wxTouchTimer);
                     wxTouchTimer = null;
                 }
             }, { passive: true });
 
-            container.addEventListener('touchend', function(e) {
+            overlay.addEventListener('touchend', function(e) {
                 if (wxTouchTimer) {
                     clearTimeout(wxTouchTimer);
                     wxTouchTimer = null;
@@ -240,7 +240,7 @@ function initLivePhotos() {
                 }
             }, { passive: true });
 
-            container.addEventListener('touchcancel', function(e) {
+            overlay.addEventListener('touchcancel', function(e) {
                 if (wxTouchTimer) {
                     clearTimeout(wxTouchTimer);
                     wxTouchTimer = null;

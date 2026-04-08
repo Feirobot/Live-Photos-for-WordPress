@@ -140,6 +140,7 @@ class LivePhotosFinalPlugin {
                 <div class="container">
                     <video src="%s" playsinline preload="metadata" %s></video>
                     <img src="%s" alt="" loading="lazy" onload="window.livePhotosInit && window.livePhotosInit(this)">
+                    <div class="overlay"></div>
                 </div>
                 <div class="icon">
                     <img src="%s" class="no-zoom static" loading="lazy">
