@@ -55,6 +55,18 @@ function initLivePhotos() {
         // 标记为已初始化
         livePhoto.classList.add('initialized');
 
+        // 获取遮罩层和背景图元素
+        const overlay = container.querySelector('.overlay');
+        const photoBg = container.querySelector('.photo-bg');
+
+        // 设置背景图
+        if (photoBg) {
+            const photoUrl = livePhoto.getAttribute('data-photo');
+            if (photoUrl) {
+                photoBg.style.backgroundImage = 'url(' + photoUrl + ')';
+            }
+        }
+
         // 确保视频属性正确设置
         video.playsInline = true;
         video.setAttribute('playsinline', '');

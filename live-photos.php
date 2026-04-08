@@ -136,10 +136,11 @@ class LivePhotosFinalPlugin {
         
         // 使用原生HTML5实现实况照片效果（已去除声音控件）
         return sprintf(
-            '<div class="live-photo %s" style="max-width: %spx;" data-muted="%s">
+            '<div class="live-photo %s" style="max-width: %spx;" data-muted="%s" data-photo="%s">
                 <div class="container">
+                    <div class="photo-bg"></div>
                     <video src="%s" playsinline preload="metadata" %s></video>
-                    <img src="%s" alt="" loading="lazy" onload="window.livePhotosInit && window.livePhotosInit(this)">
+                    <img src="%s" alt="" loading="lazy" crossorigin="anonymous" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;" onload="window.livePhotosInit && window.livePhotosInit(this)">
                     <div class="overlay"></div>
                 </div>
                 <div class="icon">
@@ -150,6 +151,7 @@ class LivePhotosFinalPlugin {
             $class_name,
             $width,
             $muted ? 'true' : 'false',
+            $photo_url,
             $video_url,
             $muted ? 'muted' : '',
             $photo_url,

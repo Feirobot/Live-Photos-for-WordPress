@@ -25,14 +25,38 @@
     user-select: none !important;
 }
 
-.live-photo .container img, 
+.live-photo .container img,
 .live-photo .container video {
     position: absolute;
     width: 100%;
     height: 100%;
-    object-fit: contain; /* 使用contain确保完整显示 */
+    object-fit: contain;
     top: 0;
     left: 0;
+    /* 隐藏媒体元素，防止被识别 */
+    opacity: 0;
+}
+
+/* 使用背景图显示静态图片 */
+.live-photo .photo-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 1s ease;
+    z-index: 1;
+}
+
+.live-photo.zoom .photo-bg {
+    opacity: 0;
+}
+
+.live-photo.zoom .container video {
+    opacity: 1;
 }
 
 .live-photo .container img {
