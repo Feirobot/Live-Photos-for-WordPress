@@ -205,30 +205,28 @@ function initLivePhotos() {
         icon.addEventListener('mouseleave', leave);
 
         // 移动设备：触摸事件处理
-        image.addEventListener('touchstart', touchStart, { passive: true });
-        image.addEventListener('touchmove', touchMove, { passive: true });
-        image.addEventListener('touchend', touchEnd);
-        image.addEventListener('touchcancel', touchCancel);
-
         // 微信浏览器特殊处理
         if (isWeixin) {
-            // 在微信浏览器中，我们需要阻止长按菜单的弹出
-            // 使用 touch-action: pan-y 允许垂直滚动
-            // 同时在 touchstart 中阻止默认行为来防止长按菜单
+            // 微信浏览器中，轻触播放（不使用 preventDefault，保持滚动流畅）
+            // CSS 已设置 -webkit-touch-callout: none 阻止长按菜单
 
             let wxTouchStartY = 0;
             let wxTouchStartX = 0;
             let wxIsMoving = false;
+            let wxPlayTimer = null;
 
             image.addEventListener('touchstart', function(e) {
                 wxTouchStartY = e.touches[0].clientY;
                 wxTouchStartX = e.touches[0].clientX;
                 wxIsMoving = false;
 
-                // 阻止默认行为以防止长按菜单
-                // touch-action: pan-y 允许垂直滚动
-                e.preventDefault();
-            }, { passive: false });
+                // 延迟播放，让用户有机会滑动
+                wxPlayTimer = setTimeout(function() {
+                    if (!wxIsMoving) {
+                        playVideo();
+                    }
+                }, 200);
+            }, { passive: true });
 
             image.addEventListener('touchmove', function(e) {
                 const touchY = e.touches[0].clientY;
@@ -238,21 +236,41 @@ function initLivePhotos() {
 
                 if (deltaY > 10 || deltaX > 10) {
                     wxIsMoving = true;
+                    if (wxPlayTimer) {
+                        clearTimeout(wxPlayTimer);
+                        wxPlayTimer = null;
+                    }
                 }
-            }, { passive: false });
+            }, { passive: true });
 
             image.addEventListener('touchend', function(e) {
-                if (!wxIsMoving) {
-                    // 轻触播放
-                    playVideo();
-                    // 延迟停止播放，给用户一个短暂的播放时间
-                    setTimeout(stopVideo, 1000);
+                if (wxPlayTimer) {
+                    clearTimeout(wxPlayTimer);
+                    wxPlayTimer = null;
                 }
-            }, { passive: false });
+
+                if (!wxIsMoving) {
+                    // 轻触，继续播放，2秒后停止
+                    setTimeout(stopVideo, 2000);
+                } else {
+                    // 滑动，停止播放
+                    stopVideo();
+                }
+            }, { passive: true });
 
             image.addEventListener('touchcancel', function(e) {
+                if (wxPlayTimer) {
+                    clearTimeout(wxPlayTimer);
+                    wxPlayTimer = null;
+                }
                 stopVideo();
-            }, { passive: false });
+            }, { passive: true });
+        } else {
+            // 其他浏览器：使用长按播放
+            image.addEventListener('touchstart', touchStart, { passive: true });
+            image.addEventListener('touchmove', touchMove, { passive: true });
+            image.addEventListener('touchend', touchEnd);
+            image.addEventListener('touchcancel', touchCancel);
         }
 
         video.addEventListener('ended', () => {

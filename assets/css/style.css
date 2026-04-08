@@ -34,12 +34,13 @@
 .live-photo .container img {
     transition: opacity 1s ease;
     /* 阻止微信长按菜单 */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
     pointer-events: auto;
-    /* 允许垂直滚动，但不允许其他触摸行为 */
-    touch-action: pan-y;
+    /* 允许垂直和水平滚动，但不允许缩放和其他行为 */
+    touch-action: pan-x pan-y;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .live-photo .container video {
