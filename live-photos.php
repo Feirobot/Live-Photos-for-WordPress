@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Live Photos for WordPress
  * Description: 实现与苹果Live Photos相同效果的WordPress插件
- * Version: 1.3
+ * Version: 1.4
  * Author: fei
  */
 
@@ -16,7 +16,6 @@ class LivePhotosFinalPlugin {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('enqueue_block_editor_assets', array($this, 'enqueue_block_assets'));
-        add_shortcode('live_photo', array($this, 'live_photo_shortcode'));
     }
     
     /**
@@ -91,9 +90,8 @@ class LivePhotosFinalPlugin {
             return false;
         }
         
-        // 检查文章内容中是否有实况照片短代码或区块
-        return has_block('live-photos-final/block', $post) || 
-               strpos($post->post_content, '[live_photo') !== false;
+        // 检查文章内容中是否有实况照片区块
+        return has_block('live-photos-final/block', $post);
     }
     
     /**
@@ -118,66 +116,7 @@ class LivePhotosFinalPlugin {
         
         return false;
     }
-    
-    /**
-     * 实况照片短代码
-     */
-    public function live_photo_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'photo' => '',
-            'video' => '',
-            'width' => '600',
-            'muted' => 'true',
-            'class' => ''
-        ), $atts, 'live_photo');
-        
-        // 获取图片和视频URL
-        if (is_numeric($atts['photo'])) {
-            $photo_url = wp_get_attachment_url($atts['photo']);
-            $photo_id = $atts['photo'];
-        } else {
-            $photo_url = $atts['photo'];
-            $photo_id = 0;
-        }
-        
-        if (is_numeric($atts['video'])) {
-            $video_url = wp_get_attachment_url($atts['video']);
-        } else {
-            $video_url = $atts['video'];
-        }
-        
-        if (empty($photo_url) || empty($video_url)) {
-            return '<div class="live-photo-placeholder">请配置实况照片</div>';
-        }
-        
-        $width = intval($atts['width']);
-        $muted = filter_var($atts['muted'], FILTER_VALIDATE_BOOLEAN);
-        
-        // 使用本地图标
-        $live_icon = plugin_dir_url(__FILE__) . 'images/live-icon.png';
-        
-        // 使用原生HTML5实现实况照片效果（已去除声音控件）
-        return sprintf(
-            '<div class="live-photo %s" style="max-width: %spx;" data-muted="%s">
-                <div class="container">
-                    <video src="%s" playsinline preload="metadata" %s></video>
-                    <img src="%s" alt="" loading="lazy" onload="window.livePhotosInit && window.livePhotosInit(this)">
-                </div>
-                <div class="icon">
-                    <img src="%s" class="no-zoom static" loading="lazy">
-                    <span>LIVE</span>
-                </div>
-            </div>',
-            esc_attr($atts['class']),
-            $width,
-            $muted ? 'true' : 'false',
-            esc_url($video_url),
-            $muted ? 'muted' : '',
-            esc_url($photo_url),
-            $live_icon
-        );
-    }
-    
+
     /**
      * 渲染古腾堡区块
      */

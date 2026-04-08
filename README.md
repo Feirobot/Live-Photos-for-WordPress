@@ -2,7 +2,7 @@
 
 实现与苹果 Live Photos 相同效果的 WordPress 插件
 
-![Version](https://img.shields.io/badge/version-1.3-blue.svg)
+![Version](https://img.shields.io/badge/version-1.4-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)
 
 ## 前言
@@ -27,7 +27,6 @@
 - **声音控制**：支持静音/非静音模式切换
 - **响应式设计**：自动适应不同屏幕尺寸
 - **古腾堡区块支持**：可视化配置图片与视频
-- **短代码支持**：支持使用短代码插入
 
 ## 安装方法
 
@@ -57,33 +56,6 @@
 
 ![区块编辑](https://eatbbqcici.oss-cn-shenzhen.aliyuncs.com/images/eatbbq/2025/09/屏幕截图-2025-09-14-232908.png)
 
-### 使用短代码
-
-```
-[live_photo photo="图片URL或附件ID" video="视频URL或附件ID" width="600" muted="true"]
-```
-
-**参数说明：**
-
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `photo` | 静态图片 URL 或附件 ID | 必填 |
-| `video` | 视频 URL 或附件 ID | 必填 |
-| `width` | 显示最大宽度（像素） | 600 |
-| `muted` | 是否静音播放（true/false） | true |
-| `class` | 自定义 CSS 类名 | 空 |
-
-**示例：**
-
-```
-[live_photo photo="https://example.com/photo.jpg" video="https://example.com/video.mp4" width="500" muted="true"]
-```
-
-使用附件 ID：
-```
-[live_photo photo="123" video="456" width="600"]
-```
-
 ## 技术实现
 
 ### 工作原理
@@ -102,6 +74,9 @@
 
 ## 更新日志
 
+### v1.4 (2025-04-08)
+- 🗑️ 删除短代码功能，仅保留古腾堡区块支持
+
 ### v1.3 (2025-04-08)
 - ✨ 重构后端 UI：现代化卡片式布局设计
 - 🎨 添加渐变背景、阴影和圆角效果
@@ -111,7 +86,6 @@
 ### v1.2 (2025-04-08)
 - 初始化版本发布
 - 支持古腾堡区块
-- 支持短代码
 - 响应式设计
 
 ## 注意事项
