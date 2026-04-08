@@ -76,7 +76,9 @@ function initLivePhotos() {
         let touchStartY = 0;
         let touchStartX = 0;
         let isTouchMoved = false;
+        let longPressTimer = null;
         const TOUCH_THRESHOLD = 10; // 滑动阈值，超过视为滚动
+        const LONG_PRESS_DURATION = 300; // 长按阈值（毫秒），超过视为长按
 
         const start = async (e) => {
             e.stopPropagation();
@@ -104,37 +106,8 @@ function initLivePhotos() {
             video.pause();
         };
 
-        // 触摸开始
-        const touchStart = (e) => {
-            touchStartY = e.touches[0].clientY;
-            touchStartX = e.touches[0].clientX;
-            isTouchMoved = false;
-        };
-
-        // 触摸移动 - 检测是否滑动
-        const touchMove = (e) => {
-            const touchY = e.touches[0].clientY;
-            const touchX = e.touches[0].clientX;
-            const deltaY = Math.abs(touchY - touchStartY);
-            const deltaX = Math.abs(touchX - touchStartX);
-
-            // 如果移动超过阈值，标记为滑动
-            if (deltaY > TOUCH_THRESHOLD || deltaX > TOUCH_THRESHOLD) {
-                isTouchMoved = true;
-            }
-        };
-
-        // 触摸结束 - 只有未滑动时才播放
-        const touchEnd = async (e) => {
-            // 如果发生了滑动，不播放视频
-            if (isTouchMoved) {
-                return;
-            }
-
-            e.stopPropagation();
-
-            within = true;
-
+        // 播放视频
+        const playVideo = async () => {
             try {
                 video.currentTime = 0;
                 await video.play();
@@ -144,10 +117,68 @@ function initLivePhotos() {
             }
         };
 
+        // 停止播放
+        const stopVideo = () => {
+            livePhoto.classList.remove('zoom');
+            video.pause();
+        };
+
+        // 触摸开始
+        const touchStart = (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+            isTouchMoved = false;
+
+            // 启动长按定时器
+            longPressTimer = setTimeout(() => {
+                if (!isTouchMoved) {
+                    playVideo();
+                }
+            }, LONG_PRESS_DURATION);
+        };
+
+        // 触摸移动 - 检测是否滑动
+        const touchMove = (e) => {
+            const touchY = e.touches[0].clientY;
+            const touchX = e.touches[0].clientX;
+            const deltaY = Math.abs(touchY - touchStartY);
+            const deltaX = Math.abs(touchX - touchStartX);
+
+            // 如果移动超过阈值，标记为滑动并取消长按
+            if (deltaY > TOUCH_THRESHOLD || deltaX > TOUCH_THRESHOLD) {
+                isTouchMoved = true;
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            }
+        };
+
+        // 触摸结束
+        const touchEnd = (e) => {
+            // 取消长按定时器
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+
+            // 如果正在播放，停止播放
+            stopVideo();
+        };
+
         const touchCancel = () => {
             isTouchMoved = false;
-            leave();
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+            stopVideo();
         };
+
+        // 阻止上下文菜单（长按弹出的菜单）
+        image.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
 
         // 桌面设备：鼠标悬停在图标上播放
         icon.addEventListener('mouseenter', start);
