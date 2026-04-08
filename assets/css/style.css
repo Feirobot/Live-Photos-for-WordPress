@@ -78,7 +78,7 @@
     pointer-events: none;
 }
 
-/* 遮罩层：覆盖在图片和视频之上，处理所有触摸交互 */
+/* 遮罩层：覆盖在背景图和视频之上，处理所有触摸交互 */
 .live-photo .overlay {
     position: absolute;
     top: 0;
@@ -94,10 +94,10 @@
     background: transparent;
 }
 
-/* 桌面端不需要遮罩层 */
+/* 桌面端不需要遮罩层阻挡点击 */
 @media (min-width: 769px) {
     .live-photo .overlay {
-        display: none;
+        pointer-events: none;
     }
 }
 
