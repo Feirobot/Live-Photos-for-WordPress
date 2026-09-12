@@ -22,7 +22,7 @@ keeps detection and video extraction in the browser.
 
 ## Download the version that matches your media
 
-There are two npm workflows. `1.2.0` remains backward-compatible with the
+There are two npm workflows. `1.2.x` remains backward-compatible with the
 `photo` + `video` player API from `1.0.0`, but it adds original-file
 recognition. Choose based on how your media reaches the page.
 
@@ -34,7 +34,7 @@ entries below.
 | Version | Main capability | Use it when | What your page receives | UI you need to build | How you use it | Install |
 | --- | --- | --- | --- | --- | --- | --- |
 | [`1.0.0`](https://www.npmjs.com/package/live-photo-component/v/1.0.0) (`manual`) | Plays an existing cover-image and video pair | Your CMS, database, or API already stores a cover image URL and an MP4/MOV URL separately | Two URLs: `photo` and `video` | Only the `<live-photo>` player | Set `<live-photo photo="…" video="…">` | `npm install live-photo-component@manual` |
-| [`1.2.0`](https://www.npmjs.com/package/live-photo-component/v/1.2.0) (`latest`) | Plays existing URL pairs, recognizes original phone Live Photos, and includes a ready-to-use upload UI | Users upload files directly from Android or iPhone; use it for new upload features | Android: one original Motion Photo file. Apple: the original image and paired MOV/MP4 selected together | Nothing for the basic flow: `<live-photo-uploader>` includes picker, status, errors, and preview. Build your own UI only for a custom flow. | Add `<live-photo-uploader>`; use `load()` / `detectAll()` only for advanced custom UI | `npm install live-photo-component@latest` |
+| [`1.2.x`](https://www.npmjs.com/package/live-photo-component) (`latest`) | Plays existing URL pairs, recognizes original phone Live Photos, and includes a ready-to-use upload UI | Users upload files directly from Android or iPhone; use it for new upload features | Android: one original Motion Photo file. Apple: the original image and paired MOV/MP4 selected together | Nothing for the basic flow: `<live-photo-uploader>` includes picker, status, errors, and preview. Build your own UI only for a custom flow. | Add `<live-photo-uploader>`; use `load()` / `detectAll()` only for advanced custom UI | `npm install live-photo-component@latest` |
 
 ### 1. Existing image + video: install `1.0.0`
 
@@ -48,7 +48,7 @@ npm install live-photo-component@1.0.0
 
 Source branch: [`manual-photo-video`](https://github.com/Feirobot/live-photo-component/tree/manual-photo-video).
 
-### 2. Original phone Live Photos: install `1.2.0` (recommended for new uploads)
+### 2. Original phone Live Photos: install `1.2.x` (recommended for new uploads)
 
 Use the newest version when users upload original files from a phone. It keeps
 the manual `photo` + `video` player API, and additionally provides `load()`,
@@ -61,8 +61,9 @@ the manual `photo` + `video` player API, and additionally provides `load()`,
   fallback.
 
 ```bash
-npm install live-photo-component@1.2.0
+npm install live-photo-component@latest
 # Equivalent: npm install live-photo-component
+# Pin the exact release if you prefer: npm install live-photo-component@1.2.0
 ```
 
 Source branch: [`main`](https://github.com/Feirobot/live-photo-component/tree/main).
@@ -120,6 +121,12 @@ playback fails.
 
 ## Install
 
+### From npm
+
+```bash
+npm install live-photo-component
+```
+
 Then import the element and its stylesheet:
 
 ```js
@@ -129,8 +136,33 @@ import 'live-photo-component/styles.css';
 
 The released npm package is available as
 [`live-photo-component`](https://www.npmjs.com/package/live-photo-component).
-The current `latest` release is `1.2.0` and includes native detection and the
+The current `latest` release is `1.2.1` and includes native detection and the
 ready-to-use uploader UI.
+
+### From a CDN (no build step)
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/live-photo-component@1.2.1/dist/styles.css">
+<script src="https://unpkg.com/live-photo-component@1.2.1/dist/live-photo.umd.js"></script>
+
+<live-photo photo="/images/cover.jpg" video="/videos/moment.mp4" muted></live-photo>
+```
+
+The UMD build registers both `<live-photo>` and `<live-photo-uploader>`, and it
+loads `live-icon.png` from its own folder automatically — the two tags above are
+all you need. The stylesheet is not injected by the script, so keep the `<link>`.
+
+**Pin the version in production.** An unversioned URL
+(`.../live-photo-component/dist/...`) follows the npm `latest` tag and would pick
+up future major releases silently. [jsDelivr](https://www.jsdelivr.com/) serves
+the same files and is usually faster in mainland China:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/live-photo-component@1.2.1/dist/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/live-photo-component@1.2.1/dist/live-photo.umd.js"></script>
+```
+
+For the player-only release, replace `@1.2.1` with `@1.0.0`.
 
 ## Play a Live Photo
 
