@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "prepare": "npm run build",
     "dev": "rollup -c -w",
     "demo": "npx serve demo -p 3000"
   },
