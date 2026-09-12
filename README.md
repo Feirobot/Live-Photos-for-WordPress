@@ -15,6 +15,9 @@ keeps detection and video extraction in the browser.
 > 中文：一个零运行时依赖的实况照片 Web Component。支持播放现有图片 +
 > 视频，也支持在浏览器中识别安卓单文件动态照片与 Apple 双文件实况照片。
 
+> Also known as / 也被称为：LivePhoto Web Component · Live Photo player ·
+> Apple Live Photo viewer · Android Motion Photo viewer · 实况照片 / 动态照片组件
+
 ![Live Photo preview](demo.gif)
 
 ## Download the version that matches your media
