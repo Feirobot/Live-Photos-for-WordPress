@@ -31,7 +31,8 @@ checkout → setup-node → npm ci（含构建）→ npm test → 校验 tag 与
 ## 2. 手动触发
 
 GitHub → **Actions** → **Publish to npm** → **Run workflow**
-（适用于补发已存在的 tag；`workflow_dispatch` 不校验 tag）
+
+发布的是 `package.json` 中**当前**的版本号，适用于：tag 推送时发布步骤失败需要重试，或已在 `main` 上升级版本但尚未打 tag。注意：若该版本号在 npm 上已存在，发布步骤会以版本冲突失败（属预期，不会覆盖已有版本）。
 
 ## 3. 一次性配置（Trusted Publishing）
 
